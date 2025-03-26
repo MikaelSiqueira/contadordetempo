@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="shortcut icon" href="favicon_io/android-chrome-512x512.png" type="image/x-icon">
+    <style>
+        @font-face {
+            font-family: 'font';
+            src: url(Fontes/adelia.otf);
+        }
+        @font-face {
+            font-family: 'shine';
+            src: url(Fontes/josephsophia.otf);
+        }
+
+    @font-face {
+        font-family: 'shinee';
+        src: url(Fontes/Wedding\ in\ the\ Starlight.ttf);
+    }
+        h1 {
+            color: white;
+            font-family: 'font';
+            font-size: 1.5em;
+        }
+
+        p {
+            font-size: 2.3em;
+            font-family: 'shinee';
+        }
+        body {
+            background-image: url(fundopreto30%.png);
+            background-position: center;
+            font-family: 'shine', sans-serif;
+            text-align: center;
+            margin-top: 0;
+            padding-top: 0;
+            background-color: #000000;
+            color: white;
+            padding-top: 5px; /* Distância do topo */
+        }
+        #contador {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-top: 1px;
+        }
+        p {
+            color: white;
+        }
+
+        /* Estilos do carrossel */
+        .carrossel-container {
+            position: relative;
+            width: 432px;
+            height: 768px;
+            overflow: hidden;
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .carrossel {
+            display: flex;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .carrossel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .navegacao {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .carrossel-container:hover .navegacao {
+            opacity: 1;
+        }
+
+        .navegacao button {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .navegacao button:hover {
+            transform: scale(1.2);
+        }
+
+        /* Estilos do player de áudio */
+        .audio-container {
+            background-color: #22222200;
+            width: 80%;
+            max-width: 350px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 0;
+            margin-top: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .arrow-btn {
+            background: none;
+            border: none;
+            cursor: default;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+        }
+
+        .arrow-btn svg {
+            fill: #fff;
+            width: 40px;
+            height: 40px;
+            opacity: 0.5;
+        }
+
+        .play-pause-btn {
+            background: #fff;
+            border: none;
+            padding: 2px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.87);
+        }
+
+        .play-pause-btn:hover, .play-pause-btn:active {
+            background-color: #1DB954;
+            box-shadow: 0 0 20px rgba(29, 185, 84, 0.7);
+        }
+
+        /* Animação de ícones play e pause */
+        .icon {
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .play {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .play.hide {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .pause {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .pause.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background-color: #444;
+            border-radius: 5px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #fff;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.1s ease-out;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.87);
+        }
+
+        /* Bola de progresso */
+        .progress-ball {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            transition: opacity 0.3s ease-out;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            color: white;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .audio-player {
+            display: none;
+        }
+
+        .progress-container:hover .progress {
+        background-color: #1DB954;
+        box-shadow: 0 0 20px rgba(29, 185, 84, 0.7);
+        }
+
+        .progress-container .progress-ball {
+            visibility: hidden;
+        }
+        /* Transições suaves para bolinha de progresso */
+        .progress-container:hover .progress-ball {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <h1>Juntos há</h1>
+    <div id="contador">00 meses, 00 dias, 00 horas, 00 minutos e 00 segundos.</div>
+
+    <div class="carrossel-container">
+        <div class="carrossel">
+            <img src="Imagens/2.jpg" alt="Imagem 1">
+            <img src="Imagens/1.jpg" alt="Imagem 2">
+            <img src="Imagens/3.jpg" alt="Imagem 3">
+            <img src="Imagens/4.jpg" alt="Imagem 4">
+            <img src="Imagens/5.jpg" alt="Imagem 5">
+            <img src="Imagens/6.jpg" alt="Imagem 6">
+            <img src="Imagens/7.jpg" alt="Imagem 7">
+            <img src="Imagens/8.jpg" alt="Imagem 8">
+            <img src="Imagens/9.jpg" alt="Imagem 9">
+            <img src="Imagens/10.jpg" alt="Imagem 10">
+            <img src="Imagens/11.jpg" alt="Imagem 11">
+            <img src="Imagens/12.jpg" alt="Imagem 12">
+            <img src="Imagens/13.jpg" alt="Imagem 13">
+            <img src="Imagens/14.jpg" alt="Imagem 14">
+        </div>
+
+        <div class="navegacao">
+            <button id="anterior">❮</button>
+            <button id="proximo">❯</button>
+        </div>
+    </div>
+
+    <p>"Assim, eles já não são dois, mas sim uma só carne. <br>Portanto, o que Deus uniu, ninguém separe."<br>Mateus 19:6</p>
+
+    <div class="audio-container">
+        <audio id="audio" class="audio-player" controls autoplay loop>
+            <source src="Musica/Forever Star.mp3" type="audio/mp3">
+            Seu navegador não suporta o elemento de áudio.
+        </audio>
+
+        <div class="controls">
+            <button id="prevBtn" class="arrow-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
+                    <path d="M14 7l-5 5 5 5V7z"/>
+                </svg>
+            </button>
+
+            <button id="playPauseBtn" class="play-pause-btn">
+                <svg class="icon play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg class="icon pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 6h4v12H6zm8 0h4v12h-4z"/></svg>
+            </button>
+
+            <button id="nextBtn" class="arrow-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
+                    <path d="M10 17l5-5-5-5v10z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress"></div>
+            <div class="progress-ball"></div>
+        </div>
+        <div class="time-info">
+            <span id="current-time">00:00</span>
+            <span id="duration">00:00</span>
+        </div>
+    </div>
+
+    <script>
+        function iniciarContador(dataInicial) {
+            const inicio = new Date(dataInicial).getTime();
+            
+            function atualizarContador() {
+                const agora = new Date().getTime();
+                const diferenca = agora - inicio;
+                
+                const anos = Math.floor(diferenca / (1000 * 60 * 60 * 24 * 365));
+                const meses = Math.floor((diferenca % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+                const dias = Math.floor((diferenca % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+                const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
+                const segundos = Math.floor((diferenca / 1000) % 60);
+                
+                let contadorTexto = "";
+                
+                if (anos > 0) {
+                    contadorTexto += anos + " anos, ";
+                }
+                contadorTexto += meses + " meses, ";
+                contadorTexto += dias + " dias, ";
+                contadorTexto += (horas < 10 ? "0" : "") + horas + " horas<br>"; 
+                contadorTexto += (minutos < 10 ? "0" : "") + minutos + " minutos e ";
+                contadorTexto += (segundos < 10 ? "0" : "") + segundos + " segundos.";
+                
+                document.getElementById("contador").innerHTML = contadorTexto;
+            }
+            
+            setInterval(atualizarContador, 1000);
+            atualizarContador();
+        }
+        
+        iniciarContador('2024-11-30T20:00:00');
+    
+        let index = 0;
+        const imagens = document.querySelectorAll('.carrossel img');
+        const carrossel = document.querySelector('.carrossel');
+        let intervalo;
+        let intervaloPausa;
+    
+        function atualizarCarrossel() {
+            carrossel.style.transform = `translateX(-${index * 100}%)`;
+        }
+    
+        function proximaImagem() {
+            index = (index + 1) % imagens.length;
+            atualizarCarrossel();
+            pausarCarrossel();
+        }
+    
+        function imagemAnterior() {
+            index = (index - 1 + imagens.length) % imagens.length;
+            atualizarCarrossel();
+            pausarCarrossel();
+        }
+    
+        function pausarCarrossel() {
+            clearInterval(intervalo);
+            clearTimeout(intervaloPausa);
+    
+            intervaloPausa = setTimeout(() => {
+                intervalo = setInterval(proximaImagem, 2000);
+            }, 5000);
+        }
+    
+        intervalo = setInterval(proximaImagem, 2000);
+    
+        document.getElementById('proximo').addEventListener('click', proximaImagem);
+        document.getElementById('anterior').addEventListener('click', imagemAnterior);
+    
+        let touchStartX = 0;
+        carrossel.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+    
+        carrossel.addEventListener('touchend', (e) => {
+            let touchEndX = e.changedTouches[0].clientX;
+            if (touchStartX - touchEndX > 50) proximaImagem();
+            else if (touchEndX - touchStartX > 50) imagemAnterior();
+        });
+    
+        atualizarCarrossel();
+    
+        const audio = document.getElementById("audio");
+        const playPauseBtn = document.getElementById("playPauseBtn");
+        const playIcon = playPauseBtn.querySelector(".play");
+        const pauseIcon = playPauseBtn.querySelector(".pause");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const progress = document.querySelector(".progress");
+        const progressBall = document.querySelector(".progress-ball");
+        const currentTimeDisplay = document.getElementById("current-time");
+        const durationDisplay = document.getElementById("duration");
+    
+        audio.addEventListener("loadedmetadata", () => {
+            durationDisplay.textContent = formatTime(audio.duration);
+        });
+    
+        audio.addEventListener("timeupdate", () => {
+            const currentTime = audio.currentTime;
+            const duration = audio.duration;
+    
+            const progressPercent = (currentTime / duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+            progressBall.style.left = `${progressPercent}%`;
+    
+            currentTimeDisplay.textContent = formatTime(currentTime);
+        });
+    
+        playPauseBtn.addEventListener("click", () => {
+            if (audio.paused) {
+                audio.play();
+                playIcon.classList.add("hide");
+                pauseIcon.classList.add("show");
+            } else {
+                audio.pause();
+                playIcon.classList.remove("hide");
+                pauseIcon.classList.remove("show");
+            }
+        });
+    
+        prevBtn.addEventListener("click", () => {
+            audio.currentTime -= 10;
+        });
+    
+        nextBtn.addEventListener("click", () => {
+            audio.currentTime += 10;
+        });
+    
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+    
+        // Novo código de arraste da bolinha
+        let isDragging = false;
+    
+        function updateProgress(e) {
+            const progressContainer = document.querySelector(".progress-container");
+            const containerWidth = progressContainer.offsetWidth;
+            let offsetX = e.clientX || e.touches[0].clientX;
+    
+            if (offsetX < progressContainer.offsetLeft) {
+                offsetX = progressContainer.offsetLeft;
+            }
+            if (offsetX > progressContainer.offsetLeft + containerWidth) {
+                offsetX = progressContainer.offsetLeft + containerWidth;
+            }
+    
+            const percent = (offsetX - progressContainer.offsetLeft) / containerWidth;
+            const newTime = percent * audio.duration;
+    
+            // Atualizar a largura do progresso e a posição da bolinha
+            progress.style.width = `${percent * 100}%`;
+            progressBall.style.left = `${percent * 100}%`;
+    
+            // Atualizar a música para a nova posição
+            audio.currentTime = newTime;
+        }
+    
+        // Iniciar o arrasto
+        progressBall.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+    
+        progressBall.addEventListener("touchstart", (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+    
+        // Durante o arrasto, atualiza a posição da bolinha e da música
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                updateProgress(e);
+            }
+        });
+    
+        document.addEventListener("touchmove", (e) => {
+            if (isDragging) {
+                updateProgress(e);
+            }
+        });
+    
+        // Quando terminar o arrasto, desativa o estado de arrasto
+        document.addEventListener("mouseup", () => {
+            if (isDragging) {
+                isDragging = false;
+            }
+        });
+    
+        document.addEventListener("touchend", () => {
+            if (isDragging) {
+                isDragging = false;
+            }
+        });
+    </script>
+    
+</body>
+</html>
